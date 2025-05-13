@@ -27,7 +27,7 @@ exports.deactivate = exports.activate = void 0;
 const vscode = __importStar(require("vscode"));
 const routesValidator_1 = require("./validators/routesValidator");
 function activate(context) {
-    const disposable = vscode.commands.registerCommand("extension.reactRouterFilePathValidator", async () => {
+    const disposable = vscode.commands.registerCommand("reactrouter-filepath-validator.validatePaths", async () => {
         const editor = vscode.window.activeTextEditor;
         if (editor) {
             const document = editor.document;
