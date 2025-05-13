@@ -4,10 +4,17 @@
 	"description": "A VS Code extension that validates file paths for layout, index, and route functions in React Router applications.",
 	"version": "0.1.0",
 	"publisher": "Chasoft Labs",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/chasoft/react-router-filepath-validator.git"
+	},
 	"engines": {
 		"vscode": "^1.60.0"
 	},
 	"main": "./dist/extension.js",
+	"activationEvents": [
+		"onCommand:reactrouter-filepath-validator.validatePaths"
+	],
 	"scripts": {
 		"compile": "tsc -p ./tsconfig.json",
 		"watch": "tsc -p ./tsconfig.json --watch",
