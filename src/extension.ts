@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { validateRoutesFilePaths } from "./validators/routesValidator";
+import type { FilePathValidationResult } from "./validators/routesValidator";
 
 export function activate(context: vscode.ExtensionContext) {
 	const disposable = vscode.commands.registerCommand(
@@ -12,13 +13,13 @@ export function activate(context: vscode.ExtensionContext) {
 				const filePath = document.fileName;
 
 				if (filePath.endsWith("routes.ts")) {
-					const validationResults = await validateRoutesFilePaths(
-						document.getText(),
-					);
+					const validationResults: FilePathValidationResult[] =
+						validateRoutesFilePaths(document.getText(), filePath);
 
-					if (validationResults.length > 0) {
+					const invalid = validationResults.filter((r) => !r.isValid);
+					if (invalid.length > 0) {
 						vscode.window.showWarningMessage(
-							`File path validation issues found: ${validationResults.join(", ")}`,
+							`File path validation issues found: ${invalid.map((r) => r.filePath).join(", ")}`,
 						);
 					} else {
 						vscode.window.showInformationMessage("All file paths are valid.");
