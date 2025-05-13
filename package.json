@@ -2,7 +2,7 @@
 	"name": "reactrouter-filepath-validator",
 	"displayName": "React Router File Path Validator",
 	"description": "A VS Code extension that validates file paths for layout, index, and route functions in React Router applications.",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"publisher": "ChasoftLabs",
 	"repository": {
 		"type": "git",
