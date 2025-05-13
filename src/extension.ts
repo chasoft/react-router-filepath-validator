@@ -3,7 +3,7 @@ import { validateRoutesFilePaths } from "./validators/routesValidator";
 
 export function activate(context: vscode.ExtensionContext) {
 	const disposable = vscode.commands.registerCommand(
-		"extension.reactRouterFilePathValidator",
+		"reactrouter-filepath-validator.validatePaths",
 		async () => {
 			const editor = vscode.window.activeTextEditor;
 

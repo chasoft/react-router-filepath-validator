@@ -22,12 +22,17 @@ This extension validates file paths for the layout, index, and route functions i
 
 3. Install dependencies:
    ```
-   bun install
+   npm install
    ```
 
 4. Open the project in Visual Studio Code.
 
 5. Press `F5` to run the extension in a new Extension Development Host window.
+
+## How to build
+
+- npm run compile
+- vsce package
 
 ## Usage
 
