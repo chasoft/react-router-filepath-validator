@@ -23,14 +23,19 @@ export function validateRoutesFilePaths(
 	// Regular expressions to match layout, index, and route function calls
 
 	// layout and index: first param is file path
-	const layoutRegex = /layout\(\s*(["'][^"']+["'])\s*,/g;
-	const indexRegex = /index\(\s*(["'][^"']+["'])\s*,/g;
+	const layoutRegex = /layout\(\s*(["'](?:\\.|[^"'\\])*["'])\s*,/g;
+	const indexRegex = /index\(\s*(["'](?:\\.|[^"'\\])*["'])\s*,/g;
 	// route: second param is file path
-	const routeRegex = /route\(\s*[^,]+,\s*(["'][^"']+["'])/g;
+	const routeRegex = /route\(\s*[^,]+,\s*(["'](?:\\.|[^"'\\])*["'])/g;
 
 	// Helper to process matches
 	function processRegex(regex: RegExp) {
 		let match: RegExpExecArray | null;
+
+		// Reset regex state before using
+		regex.lastIndex = 0;
+
+		// Using a different loop structure to avoid assignment in expression
 		match = regex.exec(routesContent);
 		while (match !== null) {
 			// Remove quotes from filePath
@@ -41,16 +46,22 @@ export function validateRoutesFilePaths(
 			const startIndex = match.index + match[0].indexOf(match[1]);
 			const isFile =
 				typeof filePath === "string" &&
-				(filePath.endsWith(".jsx") || filePath.endsWith(".tsx"));
-			let isValid = true;
+				(filePath.endsWith(".jsx") ||
+					filePath.endsWith(".tsx") ||
+					filePath.endsWith(".js") ||
+					filePath.endsWith(".ts"));
+
 			if (isFile) {
 				const fullPath = path.resolve(path.dirname(baseFilePath), filePath);
-				isValid = fs.existsSync(fullPath);
+				const isValid = fs.existsSync(fullPath);
 				results.push({ filePath, isValid, index: startIndex });
-				match = regex.exec(routesContent);
 			}
+
+			// Get next match
+			match = regex.exec(routesContent);
 		}
 	}
+
 	processRegex(layoutRegex);
 	processRegex(indexRegex);
 	processRegex(routeRegex);
