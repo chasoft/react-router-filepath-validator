@@ -2,6 +2,8 @@
 
 This extension validates file paths for the layout, index, and route functions in the `routes.ts` file for a React Router version 7 application.
 
+Latest stable version: 1.2.0
+
 ## Features
 
 - Auto validates file paths specified in the `routes.ts/js` file.
@@ -9,12 +11,6 @@ This extension validates file paths for the layout, index, and route functions i
 - Invalid filepaths will be underlined in red.
 - "Ctrl + Click" on valid file path to open that file.
 - For other files other than `routes.ts/js`, you need to run the command `Validate React Router File Paths` manually.
-
-## What's New in Version 1.1.2
-
-- Fixed issue where file paths ending with `.tsx` (like "route.tsx") were incorrectly detected.
-- Improved regex patterns for all React Router function types.
-- Supports only `.jsx` and `.tsx` files.
 
 ## Note
 
