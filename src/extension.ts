@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { validateRoutesFilePaths } from "./validators/routesValidator";
 import type { FilePathValidationResult } from "./validators/routesValidator";
+import * as path from "node:path";
 
 export function activate(context: vscode.ExtensionContext) {
 	// Create a diagnostic collection for file path errors
@@ -8,6 +9,9 @@ export function activate(context: vscode.ExtensionContext) {
 		"reactrouter-filepath-validator",
 	);
 	context.subscriptions.push(diagnosticCollection);
+
+	// Store valid paths for use in hover and document link providers
+	const validFilePaths: Map<string, FilePathValidationResult[]> = new Map();
 
 	// Helper to validate and set diagnostics for a document
 	function validateAndSetDiagnostics(
@@ -43,6 +47,7 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		}
 		diagnosticCollection.set(document.uri, diagnostics);
+		validFilePaths.set(document.uri.toString(), results);
 		return results;
 	}
 
@@ -69,6 +74,7 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.workspace.onDidCloseTextDocument((doc) => {
 			diagnosticCollection.delete(doc.uri);
+			validFilePaths.delete(doc.uri.toString());
 		}),
 	);
 
@@ -100,6 +106,45 @@ export function activate(context: vscode.ExtensionContext) {
 		},
 	);
 	context.subscriptions.push(disposable);
+
+	// Document Link Provider - provide clickable links for valid file paths
+	const documentLinkProvider = {
+		provideDocumentLinks(document: vscode.TextDocument): vscode.DocumentLink[] {
+			const links: vscode.DocumentLink[] = [];
+			const key = document.uri.toString();
+
+			if (validFilePaths.has(key)) {
+				for (const result of validFilePaths.get(key) || []) {
+					if (result.isValid) {
+						const start = document.positionAt(result.index);
+						const end = document.positionAt(
+							result.index + result.filePath.length,
+						);
+						const range = new vscode.Range(start, end);
+
+						const fullPath = path.resolve(
+							path.dirname(document.fileName),
+							result.filePath,
+						);
+						const link = new vscode.DocumentLink(
+							range,
+							vscode.Uri.file(fullPath),
+						);
+						links.push(link);
+					}
+				}
+			}
+			return links;
+		},
+	};
+
+	// Register document link provider
+	context.subscriptions.push(
+		vscode.languages.registerDocumentLinkProvider(
+			[{ language: "typescript" }, { language: "javascript" }],
+			documentLinkProvider,
+		),
+	);
 }
 
 export function deactivate() {}
